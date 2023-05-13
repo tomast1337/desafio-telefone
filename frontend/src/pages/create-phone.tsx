@@ -8,7 +8,7 @@ type CreatePhoneProps = {
 };
 
 export const CreatePhone = ({ isEdit = false }: CreatePhoneProps) => {
-  const { addPhone, updatePhone } = usePhone();
+  const { addPhone, getPhoneById, updatePhone } = usePhone();
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -48,6 +48,26 @@ export const CreatePhone = ({ isEdit = false }: CreatePhoneProps) => {
     }
   };
 
+  React.useEffect(() => {
+    if (isEdit) {
+      const getPhone = async () => {
+        console.log(id);
+        const phone = await getPhoneById(id as string);
+        setBrand(phone.brand);
+        setModel(phone.model);
+        setMemory(phone.memory);
+        setRelease(
+          new Date(
+            phone.release.getFullYear(),
+            phone.release.getMonth(),
+            phone.release.getDate()
+          )
+        );
+      };
+      getPhone();
+    }
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-900 lg:w-[900px] mx-auto px-10">
       <div className="w-full mt-8 border-2 border-gray-50 rounded p-4">
@@ -67,6 +87,7 @@ export const CreatePhone = ({ isEdit = false }: CreatePhoneProps) => {
             id="brand"
             name="brand"
             className="px-4 py-2 rounded bg-gray-800 text-gray-50"
+            value={brand}
             onChange={(event) => setBrand(event.target.value)}
           />
           <label htmlFor="model" className="text-gray-50">
@@ -77,6 +98,7 @@ export const CreatePhone = ({ isEdit = false }: CreatePhoneProps) => {
             id="model"
             name="model"
             className="px-4 py-2 rounded bg-gray-800 text-gray-50"
+            value={model}
             onChange={(event) => setModel(event.target.value)}
           />
           <label htmlFor="memory" className="text-gray-50">
@@ -87,6 +109,7 @@ export const CreatePhone = ({ isEdit = false }: CreatePhoneProps) => {
             id="memory"
             name="memory"
             className="px-4 py-2 rounded bg-gray-800 text-gray-50"
+            value={memory}
             onChange={(event) => {
               const value = Number(event.target.value);
               if (value > 0) {

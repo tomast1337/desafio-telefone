@@ -13,6 +13,7 @@ export type PhoneContextType = {
   addPhone: (phone: Phone) => Promise<void>;
   deletePhone: (id: string) => Promise<void>;
   updatePhone: (phone: Phone) => Promise<void>;
+  getPhoneById: (id: string) => Promise<Phone>;
 };
 
 export const PhoneContext = React.createContext({} as PhoneContextType);
@@ -66,9 +67,31 @@ export const PhoneProvider = ({ children }: { children: React.ReactNode }) => {
       throw new Error("Não foi possível atualizar o celular");
     }
   };
+
+  const getPhoneById = async (id: string): Promise<Phone> => {
+    try {
+      const response = await axios.get(`/phones/${id}`);
+      const { data } = await response;
+      return {
+        id: data.id,
+        brand: data.brand,
+        model: data.model,
+        memory: data.memory,
+        release: new Date(data.release),
+      };
+    } catch (error) {
+      throw new Error("Não foi possível obter o celular");
+    }
+  };
   return (
     <PhoneContext.Provider
-      value={{ getPhonesPage, addPhone, deletePhone, updatePhone }}
+      value={{
+        getPhonesPage,
+        addPhone,
+        deletePhone,
+        updatePhone,
+        getPhoneById,
+      }}
     >
       {children}
     </PhoneContext.Provider>
