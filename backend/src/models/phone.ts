@@ -15,7 +15,7 @@ const PhoneSchema: Schema = new Schema({
   release: { type: Date, required: true },
 });
 
-PhoneSchema.virtual("id").get(function (this: IProjeto) {
+PhoneSchema.virtual("id").get(function (this: IPhone) {
   return this._id.toHexString();
 });
 
