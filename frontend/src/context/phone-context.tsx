@@ -28,7 +28,7 @@ export const PhoneProvider = ({ children }: { children: React.ReactNode }) => {
     },
   ]);
   const getPhonesPage = async (page = 1, limit = 10): Promise<Phone[]> => {
-    const url = `/phones?_page=${page}&_limit=${limit}`;
+    const url = `/phones/${page}/${limit}`;
     const response = await axios.get(url);
     const { data } = await response;
     setPhones(data);

@@ -47,7 +47,13 @@ export const ListPhones = () => {
                 <td>{phone.brand}</td>
                 <td>{phone.model}</td>
                 <td>{phone.memory}</td>
-                <td>{phone.release}</td>
+                <td>
+                  {phone.release.toLocaleDateString("pt-BR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </td>
                 <td className="border border-gray-800">
                   <button>Update</button>
                 </td>
