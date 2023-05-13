@@ -9,6 +9,10 @@ function App() {
         <Routes>
           <Route path="/" element={<ListPhones />} />
           <Route path="/add-phone" element={<CreatePhone />} />
+          <Route
+            path="/edit-phone/:id"
+            element={<CreatePhone isEdit={true} />}
+          />
         </Routes>
       </HashRouter>
     </PhoneProvider>

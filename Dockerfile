@@ -1,31 +1,22 @@
-FROM node:14
-
-WORKDIR /app
-
-# copy backend and frontend code to the container
-
-COPY backend
-COPY frontend
-
-# install backend and frontend dependencies
-
-WORKDIR /app/backend
-
-RUN npm install
+# Build frontend stage
+FROM node:16 AS frontend
 
 WORKDIR /app/frontend
-
+COPY frontend/package*.json ./
 RUN npm install
 
-# build frontend
-
+COPY frontend .
 RUN npm run build
 
-# copy frontend build to backend
-
-RUN cp -r /app/frontend/dist /app/backend/public
+# Build backend stage
+FROM node:16 AS backend
 
 WORKDIR /app/backend
+COPY backend/package*.json ./
+RUN npm install
+
+COPY backend .
+COPY --from=frontend /app/frontend/dist ./public
 
 EXPOSE 3000
 

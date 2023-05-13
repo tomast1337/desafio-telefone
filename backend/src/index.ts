@@ -4,8 +4,13 @@ import cors from "cors";
 import phonesRouter from "./routes/phone-routes";
 import mongoose from "mongoose";
 
+//get env variable from docker-compose.yml
+
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/phones";
+
 const main = async () => {
-  await mongoose.connect("mongodb://localhost:27017/phones");
+  console.log("Connecting to", MONGODB_URI);
+  await mongoose.connect(MONGODB_URI, {});
   console.log("Connected to MongoDB");
 
   const app = express();
@@ -20,6 +25,7 @@ const main = async () => {
     res.send("pong");
   });
 
+  // serve static files from the React frontend app, and images
   app.use(express.static("public"));
 
   app.use("/phones", phonesRouter);

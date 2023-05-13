@@ -1,12 +1,17 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Phone } from "../context/phone-context";
 import { usePhone } from "../context/use-phone";
 
-export const CreatePhone = () => {
-  const { addPhone } = usePhone();
+type CreatePhoneProps = {
+  isEdit?: boolean;
+};
+
+export const CreatePhone = ({ isEdit = false }: CreatePhoneProps) => {
+  const { addPhone, updatePhone } = usePhone();
 
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const [brand, setBrand] = React.useState("");
   const [model, setModel] = React.useState("");
@@ -17,21 +22,37 @@ export const CreatePhone = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    addPhone({
+    const phone: Phone = {
+      id: id ? id : undefined,
       brand,
       model,
       memory,
       release,
-    } as Phone).catch((error) => {
-      setError(error.message);
-    });
+    };
+    if (isEdit) {
+      updatePhone(phone)
+        .then(() => {
+          navigate("/");
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
+    } else {
+      addPhone(phone)
+        .then(() => {
+          navigate("/");
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-900 lg:w-[900px] mx-auto px-10">
       <div className="w-full mt-8 border-2 border-gray-50 rounded p-4">
         <h1 className="text-4xl font-bold text-center text-gray-50 mb-8 relative top-[-45px] bg-gray-900 w-[fit-content] mx-auto px-4 py-2 rounded">
-          Celular
+          {isEdit ? "Editar Celular" : "Criar Celular"}
         </h1>
         <h2 className="text-2xl font-bold text-center text-red-500 mb-8">
           {error}
@@ -80,21 +101,22 @@ export const CreatePhone = () => {
             type="date"
             id="release_date"
             name="release_date"
+            value={release.toISOString().split("T")[0]}
             className="px-4 py-2 rounded bg-gray-800 text-gray-50"
             onChange={(event) => setRelease(new Date(event.target.value))}
           />
           <div className="flex justify-between w-full mt-8">
             <button
-              className="text-white px-4 py-2 rounded bg-gray-800 mt-8"
+              className="text-white px-4 py-2 rounded  mt-8 bg-red-500 hover:bg-red-600"
               onClick={() => navigate("/")}
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="text-white px-4 py-2 rounded bg-gray-800 mt-8"
+              className="text-white px-4 py-2 rounded bg-green-500 hover:bg-green-600 mt-8"
             >
-              Criar
+              {isEdit ? "Editar" : "Criar"}
             </button>
           </div>
         </form>
